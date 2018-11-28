@@ -1,0 +1,81 @@
+     1	<program> -> LPAREN_T <define> LPAREN_T <more_defines> EOF_T
+     2	<more_defines> -> <define> LPAREN_T <more_defines>
+     3	<more_defines> -> IDENT_T <stmt_list> RPAREN_T
+     4	<define> -> DEFINE_T LPAREN_T IDENT_T <param_list> RPAREN_T <stmt> <stmt_list> RPAREN_T
+     5	<stmt_list> -> <stmt> <stmt_list>
+     6	<stmt_list> -> {}
+     7	<stmt> -> <literal>
+     8	<stmt> -> IDENT_T
+     9	<stmt> -> LPAREN_T <action> RPAREN_T
+    10	<literal> -> NUMLIT_T
+    11	<literal> -> STRLIT_T
+    12	<literal> -> SQUOTE_T <quoted_lit>
+    13	<quoted_lit> -> <any_other_token>
+    14	<more_tokens> -> <any_other_token> <more_tokens>
+    15	<more_tokens> -> {}
+    16	<param_list> -> IDENT_T <param_list>
+    17	<param_list> -> {}
+    18	<else_part> -> <stmt>
+    19	<else_part> -> {}
+    20	<stmt_pair> -> LPAREN_T <stmt_pair_body>
+    21	<stmt_pair> -> {}
+    22	<stmt_pair_body> -> <stmt> <stmt> RPAREN_T <stmt_pair>
+    23	<stmt_pair_body> -> ELSE_T <stmt> RPAREN_T
+    24	<action> -> IF_T <stmt> <stmt> <else_part>
+    25	<action> -> COND_T LPAREN_T <stmt_pair_body>
+    26	<action> -> LISTOP_T <stmt>
+    27	<action> -> CONS_T <stmt> <stmt>
+    28	<action> -> AND_T <stmt_list>
+    29	<action> -> OR_T <stmt_list>
+    30	<action> -> NOT_T <stmt>
+    31	<action> -> NUMBERP_T <stmt>
+    32	<action> -> LISTP_T <stmt>
+    33	<action> -> ZEROP_T <stmt>
+    34	<action> -> NULLP_T <stmt>
+    35	<action> -> STRINGP_T <stmt>
+    36	<action> -> PLUS_T <stmt_list>
+    37	<action> -> MINUS_T <stmt> <stmt_list>
+    38	<action> -> DIV_T <stmt> <stmt_list>
+    39	<action> -> MULT_T <stmt_list>
+    40	<action> -> MODULO_T <stmt> <stmt>
+    41	<action> -> ROUND_T <stmt>
+    42	<action> -> EQUALTO_T <stmt_list>
+    43	<action> -> GT_T <stmt_list>
+    44	<action> -> LT_T <stmt_list>
+    45	<action> -> GTE_T <stmt_list>
+    46	<action> -> LTE_T <stmt_list>
+    47	<action> -> IDENT_T <stmt_list>
+    48	<action> -> DISPLAY_T <stmt>
+    49	<action> -> NEWLINE_T
+    50	<any_other_token> -> LPAREN_T <more_tokens> RPAREN_T
+    51	<any_other_token> -> IDENT_T
+    52	<any_other_token> -> NUMLIT_T
+    53	<any_other_token> -> STRLIT_T
+    54	<any_other_token> -> CONS_T
+    55	<any_other_token> -> IF_T
+    56	<any_other_token> -> DISPLAY_T
+    57	<any_other_token> -> NEWLINE_T
+    58	<any_other_token> -> LISTOP_T
+    59	<any_other_token> -> AND_T
+    60	<any_other_token> -> OR_T
+    61	<any_other_token> -> NOT_T
+    62	<any_other_token> -> DEFINE_T
+    63	<any_other_token> -> NUMBERP_T
+    64	<any_other_token> -> LISTP_T
+    65	<any_other_token> -> ZEROP_T
+    66	<any_other_token> -> NULLP_T
+    67	<any_other_token> -> STRINGP_T
+    68	<any_other_token> -> PLUS_T
+    69	<any_other_token> -> MINUS_T
+    70	<any_other_token> -> DIV_T
+    71	<any_other_token> -> MULT_T
+    72	<any_other_token> -> MODULO_T
+    73	<any_other_token> -> ROUND_T
+    74	<any_other_token> -> EQUALTO_T
+    75	<any_other_token> -> GT_T
+    76	<any_other_token> -> LT_T
+    77	<any_other_token> -> GTE_T
+    78	<any_other_token> -> LTE_T
+    79	<any_other_token> -> SQUOTE_T <any_other_token>
+    80	<any_other_token> -> COND_T
+    81	<any_other_token> -> ELSE_T
