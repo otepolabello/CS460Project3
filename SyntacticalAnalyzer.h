@@ -9,6 +9,7 @@
 using namespace std;
 
 class SyntacticalAnalyzer 
+class SyntacticalAnalyzer
 {
     public:
 	SyntacticalAnalyzer (char * filename);
@@ -16,8 +17,15 @@ class SyntacticalAnalyzer
     private:
 	LexicalAnalyzer * lex;
 	token_type token;
+public:
+    SyntacticalAnalyzer (char * filename);
+    ~SyntacticalAnalyzer ();
+private:
+    LexicalAnalyzer * lex;
+    token_type token;
     string fileTitle;
 	ofstream p2file;
+    ofstream p2file;
     
 	int program();
 	int more_defines();
@@ -33,8 +41,23 @@ class SyntacticalAnalyzer
 	int stmt_pair_body();
 	int action();
 	int any_other_token();
+    int program();
+    int more_defines();
+    int define();
+    int stmt_list();
+    int stmt();
+    int literal();
+    int quoted_lit();
+    int more_tokens();
+    int param_list();
+    int else_part();
+    int stmt_pair();
+    int stmt_pair_body();
+    int action();
+    int any_other_token();
     
     CodeGen* code;
 };
 	
+
 #endif
