@@ -11,9 +11,12 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
     string name = filename;
     lex = new LexicalAnalyzer (filename);
 //    string p2name = name.substr (0, name.length()-3) + ".p2";
+    //HERE//
     fileTitle = name.substr (0, name.length()-3);
 //    p2file.open(p2name);
+    //HERE//
     p2file.open(fileTitle + ".p2");
+    //HERE//
     code = new CodeGen(fileTitle + ".cpp", lex);
     token_type t;
     int errors = program();
@@ -74,9 +77,9 @@ int SyntacticalAnalyzer::more_defines()
     if (token == DEFINE_T)
     {   // apply rule 2
         p2file << "Using Rule 2\n";
-        ////////////////
+        //HERE//
         code->WriteCode(0, "Object(");
-        ////////////////
+        //HERE//
         errors += define();
         if (token == LPAREN_T)
         {
@@ -92,9 +95,9 @@ int SyntacticalAnalyzer::more_defines()
     else if (token == IDENT_T)
     {   // apply rule 3
         p2file << "Using Rule 3\n";
-        //////////////
+        //HERE//
         code->WriteCode(0, lex->GetLexeme());
-        //////////////
+        //HERE//
         token = lex->GetToken();
         errors += stmt_list();
         if (token == RPAREN_T)
