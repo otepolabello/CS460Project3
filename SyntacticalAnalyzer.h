@@ -16,6 +16,7 @@ public:
 private:
     LexicalAnalyzer * lex;
     token_type token;
+    //HERE//
     string fileTitle;
     ofstream p2file;
     
