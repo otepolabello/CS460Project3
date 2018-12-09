@@ -24,7 +24,9 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
 
 SyntacticalAnalyzer::~SyntacticalAnalyzer ()
 {
+    p2file.close();
     delete lex;
+    //delete code generation?
 }
 
 int SyntacticalAnalyzer::program()
@@ -64,6 +66,8 @@ int SyntacticalAnalyzer::program()
         lex->ReportError ("left parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
         errors++;
     }
+    codeGen->WriteCode(1,"return 0;\n");
+    codeGen->WriteCode(0, "}");
     tok = lex->GetTokenName(token);
     p2file << "Exiting Program function; current token is: " << tok << endl;
     return errors;
@@ -108,7 +112,7 @@ int SyntacticalAnalyzer::more_defines()
             errors++;
         }
     }
-    
+
     if (token == EOF_T)
     {   // apply rule 1
     }
@@ -138,9 +142,17 @@ int SyntacticalAnalyzer::define()
             {
                 token = lex->GetToken();
                 errors += param_list();
+                if(lexeme == "main"){
+                  codeGen->(0, "int main(");
+                  token = lex->GetToken();
+                } else {
+                  CodeGen->WriteCode(0, "object " + lexeme + "(");
+                  token = lex-GetToken();
+                }
                 if (token == RPAREN_T)
                 {
                     token = lex->GetToken();
+                    codeGen->(0, ")\n{\n");
                     errors += stmt();
                     errors += stmt_list();
                     if (token == RPAREN_T)
@@ -326,6 +338,7 @@ int SyntacticalAnalyzer::param_list()
     int errors = 0;
     if (token == IDENT_T)
     {   // apply rule 16
+      codeGen->WriteCode(0, lexeme + " ")
         p2file << "Using Rule 16\n";
         token = lex->GetToken();
         errors += param_list();
@@ -451,7 +464,7 @@ int SyntacticalAnalyzer::action()
     int errors = 0;
     switch(token)
     {
-            
+
         case IF_T:
             // apply rule 24
             p2file << "Using Rule 24\n";
@@ -460,7 +473,7 @@ int SyntacticalAnalyzer::action()
             errors += stmt();
             errors += else_part();
             break;
-            
+
         case COND_T:
             // apply rule 25
             p2file << "Using Rule 25\n";
@@ -476,7 +489,7 @@ int SyntacticalAnalyzer::action()
                 errors++;
             }
             break;
-            
+
             // apply rules 26, 30-35, 41, 48
         case LISTOP_T:
             p2file << "Using Rule 26\n";
@@ -520,10 +533,11 @@ int SyntacticalAnalyzer::action()
             break;
         case DISPLAY_T:
             p2file << "Using Rule 48\n";
+            codeGen->WriteCode(1, "cout << ");
             token = lex->GetToken();
             errors += stmt();
             break;
-            
+
             // apply rules 27, 40
         case CONS_T:
             p2file << "Using Rule 27\n";
@@ -537,7 +551,7 @@ int SyntacticalAnalyzer::action()
             errors += stmt();
             errors += stmt();
             break;
-            
+
             // apply rules 28, 29, 36, 39, 42-47
         case AND_T:
             p2file << "Using Rule 28\n";
@@ -589,7 +603,7 @@ int SyntacticalAnalyzer::action()
             token = lex->GetToken();
             errors += stmt_list();
             break;
-            
+
             // apply rules 37, 38
         case MINUS_T:
             p2file << "Using Rule 37\n";
@@ -603,17 +617,18 @@ int SyntacticalAnalyzer::action()
             errors += stmt();
             errors += stmt_list();
             break;
-            
+
         case NEWLINE_T:
             // apply rule 49
             p2file << "Using Rule 49\n";
+            codeGen->WriteCode(1, "cout << endl;\n");
             token = lex->GetToken();
             break;
-            
+
         case RPAREN_T:
             // do nothing
             break;
-            
+
         default:
             lex->ReportError ("action token expected, '" + lex->GetTokenName(token) + "' found.");
             errors++;
@@ -676,4 +691,3 @@ int SyntacticalAnalyzer::any_other_token()
     p2file << "Exiting Any_Other_Token function; current token is: " << tok << endl;
     return errors;
 }
-
