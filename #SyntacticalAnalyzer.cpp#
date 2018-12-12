@@ -11,7 +11,7 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
     string name = filename;
     // declaring our new objects. (Lex Analyzer & Code Generator)
     lex = new LexicalAnalyzer (filename);
-    gen = new CodeGen (name, lex);
+    gen = new CodeGen (filename);
 //    string p2name = name.substr (0, name.length()-3) + ".p2";
     //HERE//
     fileTitle = name.substr (0, name.length()-3);
@@ -68,8 +68,8 @@ int SyntacticalAnalyzer::program()
         lex->ReportError ("left parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
         errors++;
     }
-    gen->WriteCode(1,"return 0;\n");
-    gen->WriteCode(0, "}");
+    codeGen->WriteCode(1,"return 0;\n");
+    codeGen->WriteCode(0, "}");
     tok = lex->GetTokenName(token);
     p2file << "Exiting Program function; current token is: " << tok << endl;
     return errors;
@@ -145,16 +145,16 @@ int SyntacticalAnalyzer::define()
                 token = lex->GetToken();
                 errors += param_list();
                 if(lexeme == "main"){
-                  gen->WriteCode(0, "int main(");
+                  codeGen->(0, "int main(");
                   token = lex->GetToken();
                 } else {
-                  gen->WriteCode(0, "object " + lexeme + "(");
-                  token = lex->GetToken();
+                  CodeGen->WriteCode(0, "object " + lexeme + "(");
+                  token = lex-GetToken();
                 }
                 if (token == RPAREN_T)
                 {
                     token = lex->GetToken();
-                    gen->WriteCode(0, ")\n{\n");
+                    codeGen->(0, ")\n{\n");
                     errors += stmt();
                     errors += stmt_list();
                     if (token == RPAREN_T)
@@ -343,7 +343,7 @@ int SyntacticalAnalyzer::param_list()
     int errors = 0;
     if (token == IDENT_T)
     {   // apply rule 16
-      gen->WriteCode(0, lexeme + " ");
+      codeGen->WriteCode(0, lexeme + " ")
         p2file << "Using Rule 16\n";
         token = lex->GetToken();
         errors += param_list();
@@ -393,317 +393,4 @@ int SyntacticalAnalyzer::stmt_pair()
     p2file << "Entering Stmt_Pair function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
     if (token == LPAREN_T)
-    {   // apply rule 20
-        p2file<< "Using Rule 20\n";
-        token = lex->GetToken();
-        errors += stmt_pair_body();
-    }
-    else if (token == RPAREN_T)
-    {   // apply rule 21
-        p2file << "Using Rule 21\n";
-    }
-    else
-    {
-        lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
-        errors++;
-    }
-    tok = lex->GetTokenName(token);
-    p2file << "Exiting Stmt_Pair function; current token is: " << tok << endl;
-    return errors;
-}
-
-int SyntacticalAnalyzer::stmt_pair_body()
-{
-    string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
-    p2file << "Entering Stmt_Pair_Body function; current token is: " << tok << ", lexeme: " << lexeme << endl;
-    int errors = 0;
-    if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T
-        || token == IDENT_T || token == LPAREN_T)
-    {   // apply rule 22
-        p2file << "Using Rule 22\n";
-        errors += stmt();
-        if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T
-            || token == IDENT_T || token == LPAREN_T)
-        {
-            errors += stmt();
-            if (token == RPAREN_T)
-            {
-                token = lex->GetToken();
-                errors += stmt_pair();
-            }
-            else
-            {
-                lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
-            }
-        }
-        else
-        {
-            lex->ReportError ("NUMLIT_T, STRLIT_T, SQUOTE_T, IDENT_T, or LPAREN_T expected, '" + lex->GetTokenName(token) + "' found.");
-            errors++;
-        }
-    }
-    else if (token == ELSE_T)
-    {   // apply rule 23
-        p2file << "Using Rule 23\n";
-        token = lex->GetToken();
-        errors += stmt();
-        if (token == RPAREN_T)
-        {
-            token = lex->GetToken();
-        }
-    }
-    else
-    {
-        lex->ReportError ("NUMLIT_T, STRLIT_T, SQUOTE_T, IDENT_T, LPAREN_T or ELSE_T expected, '" + lex->GetTokenName(token) + "' found.");
-        errors++;
-    }
-    tok = lex->GetTokenName(token);
-    p2file << "Exiting Stmt_Pair_Body function; current token is: " << tok << endl;
-    return errors;
-}
-
-int SyntacticalAnalyzer::action()
-{
-    string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
-    p2file << "Entering Action function; current token is: " << tok << ", lexeme: " << lexeme << endl;
-    int errors = 0;
-    switch(token)
-    {
-
-        case IF_T:
-            // apply rule 24
-            p2file << "Using Rule 24\n";
-            token = lex->GetToken();
-            errors += stmt();
-            errors += stmt();
-            errors += else_part();
-            break;
-
-        case COND_T:
-            // apply rule 25
-            p2file << "Using Rule 25\n";
-            token = lex->GetToken();
-            if (token == LPAREN_T)
-            {
-                token = lex->GetToken();
-                errors += stmt_pair_body();
-            }
-            else
-            {
-                lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
-                errors++;
-            }
-            break;
-
-            // apply rules 26, 30-35, 41, 48
-        case LISTOP_T:
-            p2file << "Using Rule 26\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case NOT_T:
-            p2file << "Using Rule 30\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case NUMBERP_T:
-            p2file << "Using Rule 31\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case LISTP_T:
-            p2file << "Using Rule 32\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case ZEROP_T:
-            p2file << "Using Rule 33\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case NULLP_T:
-            p2file << "Using Rule 34\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case STRINGP_T:
-            p2file << "Using Rule 35\n";
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-        case ROUND_T:
-            p2file << "Using Rule 41\n";
-	    gen->WriteCode(1, "round(");
-            token = lex->GetToken();
-            errors += stmt();
-	    gen->WriteCode(0, ")");
-            break;
-        case DISPLAY_T:
-            p2file << "Using Rule 48\n";
-            gen->WriteCode(1, "cout << ");
-            token = lex->GetToken();
-            errors += stmt();
-            break;
-
-            // apply rules 27, 40
-        case CONS_T:
-            p2file << "Using Rule 27\n";
-            token = lex->GetToken();
-            errors += stmt();
-            errors += stmt();
-            break;
-        case MODULO_T:
-            p2file << "Using Rule 40\n";
-            token = lex->GetToken();
-	    gen->WriteCode(1,"");
-            errors += stmt();
-	    gen->WriteCode(0, " % ");
-            errors += stmt();
-	    gen->WriteCode(0, ";\n");
-            break;
-
-            // apply rules 28, 29, 36, 39, 42-47
-        case AND_T:
-            p2file << "Using Rule 28\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case OR_T:
-            p2file << "Using Rule 29\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case PLUS_T:
-            p2file << "Using Rule 36\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case MULT_T:
-            p2file << "Using Rule 39\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case EQUALTO_T:
-            p2file << "Using Rule 42\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case GT_T:
-            p2file << "Using Rule 43\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case LT_T:
-            p2file << "Using Rule 44\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case GTE_T:
-            p2file << "Using Rule 45\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case LTE_T:
-            p2file << "Using Rule 46\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-        case IDENT_T:
-            p2file << "Using Rule 47\n";
-            token = lex->GetToken();
-            errors += stmt_list();
-            break;
-
-            // apply rules 37, 38
-        case MINUS_T:
-            p2file << "Using Rule 37\n";
-	    gen->WriteCode(1,"");
-            token = lex->GetToken();
-	    errors += stmt();
-	    gen->WriteCode(0," - ");
-            errors += stmt_list();
-	    gen->WriteCode(0, ";\n");
-            break;
-        case DIV_T:
-            p2file << "Using Rule 38\n";
-	    gen->WriteCode(1,"");
-	    token = lex->GetToken();
-            errors += stmt();
-	    gen->WriteCode(0," / ");
-            errors += stmt_list();
-	    gen->WriteCode(0, ";\n");
-            break;
-
-        case NEWLINE_T:
-            // apply rule 49
-            p2file << "Using Rule 49\n";
-            gen->WriteCode(1, "cout << endl;\n");
-            token = lex->GetToken();
-            break;
-
-        case RPAREN_T:
-            // do nothing
-            break;
-
-        default:
-            lex->ReportError ("action token expected, '" + lex->GetTokenName(token) + "' found.");
-            errors++;
-    }
-    tok = lex->GetTokenName(token);
-    p2file << "Exiting Action function; current token is: " << tok << endl;
-    return errors;
-}
-
-int SyntacticalAnalyzer::any_other_token()
-{
-    string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
-    p2file << "Entering Any_Other_Token function; current token is: " << tok << ", lexeme: " << lexeme << endl;
-    int errors = 0;
-    if (token == LPAREN_T)
-    {   // apply rule 50
-        p2file << "Using Rule 50\n";
-        token = lex->GetToken();
-        errors += more_tokens();
-        if (token == RPAREN_T)
-        {
-            token = lex->GetToken();
-        }
-        else
-        {
-            lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
-            errors++;
-        }
-    }
-    else if (token >= IDENT_T && token <= LTE_T)
-    {   // apply rules 51-78, 80, 81
-        if(token >= IDENT_T && token <= IF_T)
-            p2file << "Using Rule " << token + 50 << endl;
-        else if(token == COND_T)
-            p2file << "Using Rule 80\n";
-        else if(token >= DISPLAY_T && token <= STRINGP_T)
-            p2file << "Using Rule " << token + 49 << endl;
-        else if(token == MODULO_T || token == ROUND_T)
-            p2file << "Using Rule " << token + 53 << endl;
-        else if(token == ELSE_T)
-            p2file << "Using Rule 81\n";
-        else if(token >= PLUS_T && token <= MULT_T)
-            p2file << "Using Rule " << token + 46 << endl;
-        else if(token >= EQUALTO_T && token <= LTE_T)
-            p2file << "Using Rule " << token + 48 << endl;
-        token = lex->GetToken();
-    }
-    else if (token == SQUOTE_T)
-    {   // apply rule 79
-        p2file << "Using Rule 79\n";
-        token = lex->GetToken();
-        errors += any_other_token();
-    }
-    else
-    {
-        lex->ReportError ("any other token expected, '" + lex->GetTokenName(token) + "' found.");
-        errors++;
-    }
-    tok = lex->GetTokenName(token);
-    p2file << "Exiting Any_Other_Token function; current token is: " << tok << endl;
-    return errors;
-}
+    { 
