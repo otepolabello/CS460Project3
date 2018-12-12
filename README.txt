@@ -1,10 +1,10 @@
-# CS460Project2 
+# CS460Project3
 
-Description: Part 2 of semester project. Handling the syntactical analyzer. 
+Description: Part 3 of semester project. 
 
 Team Members:
 
-Justin Moore, Robert Hubbell & Tobi Otepola-Bello
+Timothy Gallagher, Will Lucic & Tobi Otepola-Bello
 
 What Works:
 
