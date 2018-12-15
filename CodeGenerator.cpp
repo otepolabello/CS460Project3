@@ -5,7 +5,8 @@
 using namespace std;
 
 /********************************************************************************/
-/* This function will								*/
+/* This function will generate the top piece of code that will header our file
+The input is the filename and it will create a file and output the header								*/
 /********************************************************************************/
 CodeGen::CodeGen (string filename)
 {
@@ -19,7 +20,7 @@ CodeGen::CodeGen (string filename)
 }
 
 /********************************************************************************/
-/* This function will								*/
+/* Destructor						       	*/
 /********************************************************************************/
 CodeGen::~CodeGen ()
 {
@@ -27,7 +28,9 @@ CodeGen::~CodeGen ()
 }
 
 /********************************************************************************/
-/* This function will								*/
+/* This function will write code based of the tabs and code input.
+This function is primarily called in SyntacticalAnalyzer.cpp and will be the main
+code writer for our program.							*/
 /********************************************************************************/
 void CodeGen::WriteCode (int tabs, string code)
 {

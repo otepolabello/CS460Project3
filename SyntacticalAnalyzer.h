@@ -15,11 +15,11 @@ public:
     ~SyntacticalAnalyzer ();
 private:
     LexicalAnalyzer * lex;
+    CodeGen * gen;
     token_type token;
-    //HERE//
     string fileTitle;
     ofstream p2file;
-    
+    // Transition function area
     int program();
     int more_defines();
     int define();
