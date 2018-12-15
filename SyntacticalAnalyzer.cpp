@@ -99,7 +99,7 @@ int SyntacticalAnalyzer::more_defines()
     {   // apply rule 2
         p2file << "Using Rule 2\n";
         //HERE//
-        code->WriteCode(0, "Object(");
+        //code->WriteCode(0, "Object(");
         //HERE//
         errors += define();
         if (token == LPAREN_T)
@@ -494,6 +494,7 @@ int SyntacticalAnalyzer::action()
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Action function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
+    string oldToken = "";
     switch(token)
     {
 
@@ -592,18 +593,24 @@ int SyntacticalAnalyzer::action()
             // apply rules 28, 29, 36, 39, 42-47
         case AND_T:
             p2file << "Using Rule 28\n";
-            token = lex->GetToken();
-            errors += stmt_list();
+	    gen->WriteCode(1, "");
+	    oldToken = lex->GetLexeme(); // Grabbing lexeme for continuing stmt_list
+            token = lex->GetToken();    // Continuing to next token
+            errors += stmt_list(oldToken); // Stashing the oldToken in the stmt_list
             break;
         case OR_T:
             p2file << "Using Rule 29\n";
+	    gen->WriteCode(1, "");
+	    oldToken = lex->GetLexeme();
             token = lex->GetToken();
-            errors += stmt_list();
+            errors += stmt_list(oldToken);
             break;
         case PLUS_T:
             p2file << "Using Rule 36\n";
+	    gen->WriteCode(1,"");
+	    oldToken = GetLexeme();
             token = lex->GetToken();
-            errors += stmt_list();
+            errors += stmt_list(oldToken);
             break;
         case MULT_T:
             p2file << "Using Rule 39\n";
