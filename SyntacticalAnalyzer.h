@@ -15,7 +15,7 @@ public:
     ~SyntacticalAnalyzer ();
 private:
     LexicalAnalyzer * lex;
-    CodeGen * gen;
+    CodeGen * codeGen;
     token_type token;
     string fileTitle;
     ofstream p2file;
@@ -34,8 +34,6 @@ private:
     int stmt_pair_body();
     int action();
     int any_other_token();
-    //HERE//
-    CodeGen* codeGen;
 };
 
 #endif

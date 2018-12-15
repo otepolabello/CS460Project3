@@ -3,7 +3,6 @@
 #include <fstream>
 #include <cstdlib>
 #include "SyntacticalAnalyzer.h"
-
 using namespace std;
 
 /*
@@ -26,15 +25,12 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
     string name = filename;
     // declaring our new objects. (Lex Analyzer & Code Generator)
     lex = new LexicalAnalyzer (filename);
-    gen = new CodeGen (name, lex);
 //    string p2name = name.substr (0, name.length()-3) + ".p2";
     
     fileTitle = name.substr (0, name.length()-3);
 //    p2file.open(p2name);
-    
     p2file.open(fileTitle + ".p2");
-
-    codeGen = new CodeGen(fileTitle + ".cpp");
+    codeGen = new CodeGen(filename);
     token_type t;
     t = lex->GetToken();
     int errors = program();
@@ -83,8 +79,8 @@ int SyntacticalAnalyzer::program()
         lex->ReportError ("left parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
         errors++;
     }
-    gen->WriteCode(1,"return 0;\n");
-    gen->WriteCode(0, "}");
+    codeGen->WriteCode(1,"return 0;\n");
+    codeGen->WriteCode(0, "}");
     tok = lex->GetTokenName(token);
     p2file << "Exiting Program function; current token is: " << tok << endl;
     return errors;
@@ -97,10 +93,8 @@ int SyntacticalAnalyzer::more_defines()
     int errors = 0;
     if (token == DEFINE_T)
     {   // apply rule 2
-        p2file << "Using Rule 2\n";
-        
+        p2file << "Using Rule 2\n";        
         codeGen->WriteCode(0, "Object(");
-        
         errors += define(); 
         if (token == LPAREN_T)
         {
@@ -571,14 +565,14 @@ int SyntacticalAnalyzer::action()
             break;
         case ROUND_T:
             p2file << "Using Rule 41\n";
-	    gen->WriteCode(1, "round(");
+	    codeGen->WriteCode(1, "round(");
             token = lex->GetToken();
             errors += stmt();
-	    gen->WriteCode(0, ")");
+	    codeGen->WriteCode(0, ")");
             break;
         case DISPLAY_T:
             p2file << "Using Rule 48\n";
-            gen->WriteCode(1, "cout << ");
+            codeGen->WriteCode(1, "cout << ");
             token = lex->GetToken();
             errors += stmt();
             break;
@@ -593,26 +587,29 @@ int SyntacticalAnalyzer::action()
         case MODULO_T:
             p2file << "Using Rule 40\n";
             token = lex->GetToken();
-	    gen->WriteCode(1,"");
+	    codeGen->WriteCode(1,"");
             errors += stmt();
-	    gen->WriteCode(0, " % ");
+	    codeGen->WriteCode(0, " % ");
             errors += stmt();
-	    gen->WriteCode(0, ";\n");
+	    codeGen->WriteCode(0, ";\n");
             break;
 
             // apply rules 28, 29, 36, 39, 42-47
         case AND_T:
             p2file << "Using Rule 28\n";
-            token = lex->GetToken();
+	    codeGen->WriteCode(1, "");
+            token = lex->GetToken();    // Continuing to next token
             errors += stmt_list(" && ", false);
             break;
         case OR_T:
             p2file << "Using Rule 29\n";
+	    codeGen->WriteCode(1, "");
             token = lex->GetToken();
             errors += stmt_list(" || ", false);
-            break;
+	    break;
         case PLUS_T:
             p2file << "Using Rule 36\n";
+	    codeGen->WriteCode(1,"");
             token = lex->GetToken();
             errors += stmt_list(" + ", false);
             break;
@@ -656,14 +653,14 @@ int SyntacticalAnalyzer::action()
             // apply rules 37, 38
         case MINUS_T:
             p2file << "Using Rule 37\n";
-	    gen->WriteCode(1,"");
+	    codeGen->WriteCode(1,"");
             token = lex->GetToken();
             errors += stmt();
             errors += stmt_list(" - ", true);
             break;
         case DIV_T:
             p2file << "Using Rule 38\n";
-	    gen->WriteCode(1,"");
+	    codeGen->WriteCode(1,"");
 	    token = lex->GetToken();
             errors += stmt();
             errors += stmt_list(" / ", true);
@@ -672,7 +669,7 @@ int SyntacticalAnalyzer::action()
         case NEWLINE_T:
             // apply rule 49
             p2file << "Using Rule 49\n";
-            gen->WriteCode(1, "cout << endl;\n");
+            codeGen->WriteCode(1, "cout << endl;\n");
             token = lex->GetToken();
             break;
 
