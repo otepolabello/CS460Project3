@@ -3,7 +3,6 @@
 #include <fstream>
 #include <cstdlib>
 #include "SyntacticalAnalyzer.h"
-
 using namespace std;
 
 /*
@@ -30,10 +29,8 @@ SyntacticalAnalyzer::SyntacticalAnalyzer (char * filename)
     
     fileTitle = name.substr (0, name.length()-3);
 //    p2file.open(p2name);
-    
     p2file.open(fileTitle + ".p2");
-
-    codeGen = new CodeGen(fileTitle + ".cpp");
+    codeGen = new CodeGen(filename);
     token_type t;
     t = lex->GetToken();
     int errors = program();
@@ -493,7 +490,6 @@ int SyntacticalAnalyzer::action()
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Action function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
-    string oldToken = "";
     switch(token)
     {
 
@@ -569,7 +565,7 @@ int SyntacticalAnalyzer::action()
             break;
         case ROUND_T:
             p2file << "Using Rule 41\n";
-	    Codegen->WriteCode(1, "round(");
+	    codeGen->WriteCode(1, "round(");
             token = lex->GetToken();
             errors += stmt();
 	    codeGen->WriteCode(0, ")");
@@ -608,14 +604,12 @@ int SyntacticalAnalyzer::action()
         case OR_T:
             p2file << "Using Rule 29\n";
 	    codeGen->WriteCode(1, "");
-	    oldToken = lex->GetLexeme();
             token = lex->GetToken();
             errors += stmt_list(" || ", false);
 	    break;
         case PLUS_T:
             p2file << "Using Rule 36\n";
 	    codeGen->WriteCode(1,"");
-	    oldToken = GetLexeme();
             token = lex->GetToken();
             errors += stmt_list(" + ", false);
             break;
