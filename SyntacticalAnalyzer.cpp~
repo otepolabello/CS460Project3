@@ -368,8 +368,8 @@ int SyntacticalAnalyzer::param_list()
     int errors = 0;
     if (token == IDENT_T)
     {   // apply rule 16
-      //RULE: <param_list> -> IDENT_T <param_list>
-      gen->WriteCode(0, "Object" + lex->GetLexeme() + ")");
+      //RULE" <param_list> -> IDENT_T <param_list>
+      gen->WriteCode(0, lexeme + " ");
       p2file << "Using Rule 16\n";
       token = lex->GetToken();
       errors += param_list();
@@ -452,14 +452,12 @@ int SyntacticalAnalyzer::stmt_pair_body()
     if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T
         || token == IDENT_T || token == LPAREN_T)
     {   // apply rule 22
-      //RULE: <stmt_pair_body> -> <stmt><stmt> RPAREN_T <stmt_pair>
-      gen->WriteCode(0, "object" + lex->GetLexeme() + "(");
         p2file << "Using Rule 22\n";
         errors += stmt();
         if (token == NUMLIT_T || token == STRLIT_T || token == SQUOTE_T
             || token == IDENT_T || token == LPAREN_T)
         {
-	    errors += stmt();
+            errors += stmt();
             if (token == RPAREN_T)
             {
                 token = lex->GetToken();
@@ -478,9 +476,8 @@ int SyntacticalAnalyzer::stmt_pair_body()
     }
     else if (token == ELSE_T)
     {   // apply rule 23
-      //RULE: <stmt_pair_body> -> ELSE_T <stmt> RPAREN_T
         p2file << "Using Rule 23\n";
-	token = lex->GetToken();
+        token = lex->GetToken();
         errors += stmt();
         if (token == RPAREN_T)
         {
@@ -622,9 +619,9 @@ int SyntacticalAnalyzer::action()
             break;
         case EQUALTO_T:
             p2file << "Using Rule 42\n";
-	    token = lex->GetToken();
-	    errors += stmt_list();
-	    break;
+            token = lex->GetToken();
+            errors += stmt_list();
+            break;
         case GT_T:
             p2file << "Using Rule 43\n";
             token = lex->GetToken();
