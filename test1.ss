@@ -1,0 +1,8 @@
+(define (main)
+	(display 5678) (newline)
+	(display 3.14159) (newline)
+	(display 'x) (newline)
+	(display 'xyz) (newline)
+	(display "Sonoma State") (newline)
+	(display '(1 23 abc de45)) (newline)
+)
