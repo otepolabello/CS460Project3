@@ -18,6 +18,8 @@ SyntacticalAnalyzer.o : SyntacticalAnalyzer.cpp SyntacticalAnalyzer.h LexicalAna
 
 clean : 
 	rm -f *.o P2.out *.gch *.lst *.dbg *.p* *~
+	rm P3.out test1.cpp Team6P3.tgz
+	rm -r Team6P3/
 
 submit : Project2.cpp LexicalAnalyzer.h LexicalAnalyzer.cpp CodeGenerator.h CodeGenerator.cpp CodeGenerator.h SyntacticalAnalyzer.h SyntacticalAnalyzer.cpp makefile README.txt
 	rm -rf Team6P3

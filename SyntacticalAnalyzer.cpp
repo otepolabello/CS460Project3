@@ -162,12 +162,12 @@ int SyntacticalAnalyzer::define()
 	  errors++;
 	    }
 	errors += param_list();
-	token = lex->GetToken();  
+	//token = lex->GetToken();  
 	if (token == RPAREN_T){
 	  token = lex->GetToken();
 	  //codeGen->WriteCode(0, ")\n{\n");
 	} else {
-	  lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
+	  lex->ReportError ("right parenthesis expected(1), '" + lex->GetTokenName(token) + "' found.");
 	  errors++;
 	}
 	errors += stmt();
@@ -177,7 +177,7 @@ int SyntacticalAnalyzer::define()
 	    token = lex->GetToken();
 	  }
 	else {
-	  lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
+	  lex->ReportError ("right parenthesis expected(2), '" + lex->GetTokenName(token) + "' found.");
 	  errors++;
 	}
 	tok = lex->GetTokenName(token);
@@ -206,7 +206,7 @@ int SyntacticalAnalyzer::stmt_list(const string& delim, const bool& print)
     }
     else
     {
-        lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
+        lex->ReportError ("right parenthesis expected(3), '" + lex->GetTokenName(token) + "' found.");
         errors++;
     }
     tok = lex->GetTokenName(token);
@@ -239,7 +239,7 @@ int SyntacticalAnalyzer::stmt()
             token = lex->GetToken();
         else
         {
-            lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
+            lex->ReportError ("right parenthesi(4) expected, '" + lex->GetTokenName(token) + "' found.");
             errors++;
         }
     }
