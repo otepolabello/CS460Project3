@@ -173,7 +173,7 @@ int SyntacticalAnalyzer::define()
         errors += stmt();
         errors += stmt_list(";\n", true);
         if (token == RPAREN_T){
-            codeGen->WriteCode(0, "}\n");
+            codeGen->WriteCode(0, ";\n");
             token = lex->GetToken();
         }
         else {
@@ -304,7 +304,9 @@ int SyntacticalAnalyzer::quoted_lit()
     if ((token >= IDENT_T && token <= LPAREN_T) || token == SQUOTE_T)
     {   // apply rule 13
         p2file << "Using Rule 13\n";
+        codeGen->WriteCode(0, "\"");
         errors += any_other_token();
+        codeGen->WriteCode(0, "\"");
     }
     else
     {
@@ -659,7 +661,7 @@ int SyntacticalAnalyzer::action()
         case NEWLINE_T:
             // apply rule 49
             p2file << "Using Rule 49\n";
-            codeGen->WriteCode(0, "cout << endl; ");
+            codeGen->WriteCode(0, "cout << endl");
             token = lex->GetToken();
             break;
 
