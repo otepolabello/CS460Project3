@@ -165,7 +165,7 @@ int SyntacticalAnalyzer::define()
 	//token = lex->GetToken();  
 	if (token == RPAREN_T){
 	  token = lex->GetToken();
-	  //codeGen->WriteCode(0, ")\n{\n");
+	  codeGen->WriteCode(0, ")\n{\n");
 	} else {
 	  lex->ReportError ("right parenthesis expected(1), '" + lex->GetTokenName(token) + "' found.");
 	  errors++;
@@ -346,18 +346,15 @@ int SyntacticalAnalyzer::param_list()
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Param_List function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
+    string oldTok = "";
     if (token == IDENT_T)
-    {   // apply rule 16
-        codeGen->WriteCode(0, lexeme + " ");
+    {
         p2file << "Using Rule 16\n";
+	oldTok = lex->GetLexeme();
         token = lex->GetToken();
+	if
         errors += param_list();
-    }
-    else if (token == RPAREN_T)
-    {   // apply rule 17
-        p2file << "Using Rule 17\n";
-    }
-    else
+    } else
     {
         lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
         errors++;
