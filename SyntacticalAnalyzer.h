@@ -28,7 +28,7 @@ private:
     int literal();
     int quoted_lit();
     int more_tokens();
-    int param_list();
+    int param_list(const bool& first = true);
     int else_part();
     int stmt_pair();
     int stmt_pair_body();
