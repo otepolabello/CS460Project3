@@ -21,18 +21,18 @@ private:
     ofstream p2file;
     // Transition function area
     int program();
-    int more_defines();
-    int define();
-    int stmt_list(const string& delim = "", const bool& print = false);
-    int stmt();
+    int more_defines(int tabs);
+    int define(int tabs);
+    int stmt_list(const string& delim = "", const bool& print = false, int tabs = 0);
+    int stmt(int tabs = 0);
     int literal();
     int quoted_lit();
     int more_tokens();
     int param_list(const bool& first = true);
-    int else_part();
-    int stmt_pair();
-    int stmt_pair_body();
-    int action();
+    int else_part(int tabs);
+    int stmt_pair(int tabs);
+    int stmt_pair_body(int tabs);
+    int action(int tabs);
     int any_other_token();
 };
 
