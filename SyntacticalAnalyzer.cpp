@@ -206,8 +206,8 @@ int SyntacticalAnalyzer::define()
 }
 int SyntacticalAnalyzer::stmt_list(const string& delim, const bool& print)
 {
-  //<stmt_list> -> <stmt> <stmt_list>
-  //<stmt_list> -> {}
+  // <stmt_list> -> <stmt> <stmt_list>
+  // <stmt_list> -> {}
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Stmt_List function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
@@ -237,9 +237,9 @@ int SyntacticalAnalyzer::stmt_list(const string& delim, const bool& print)
 
 int SyntacticalAnalyzer::stmt()
 {
-  //<stmt> -> <literal>
-  //<stmt> -> IDENT_T
-  //<stmt> -> LPAREN_T <action> RPAREN_T
+  // <stmt> -> <literal>
+  // <stmt> -> IDENT_T
+  // <stmt> -> LPAREN_T <action> RPAREN_T
   //
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Stmt function; current token is: " << tok << ", lexeme: " << lexeme << endl;
@@ -373,8 +373,8 @@ int SyntacticalAnalyzer::more_tokens()
 
 int SyntacticalAnalyzer::param_list(const bool& first)
 {
-  //<param_list> -> IDENT_T <param_list>
-  //<param_list> -> {}
+  // <param_list> -> IDENT_T <param_list>
+  // <param_list> -> {}
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Param_List function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
@@ -402,8 +402,8 @@ int SyntacticalAnalyzer::param_list(const bool& first)
 
 int SyntacticalAnalyzer::else_part()
 {
-  //<else_part> -> <stmt>
-  //<else_part>-> {}
+  // <else_part> -> <stmt>
+  // <else_part>-> {}
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Else_Part function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
@@ -429,8 +429,8 @@ int SyntacticalAnalyzer::else_part()
 
 int SyntacticalAnalyzer::stmt_pair()
 {
-  //<stmt_pair> -> LPAREN_T <stmt_pair_body>
-  //<stmt_pair> -> {}
+  // <stmt_pair> -> LPAREN_T <stmt_pair_body>
+  // <stmt_pair> -> {}
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Stmt_Pair function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
@@ -456,8 +456,8 @@ int SyntacticalAnalyzer::stmt_pair()
 
 int SyntacticalAnalyzer::stmt_pair_body()
 {
-  //<stmt_pair_body> -> <stmt> <stmt> RPAREN_T <stmt_pair>
-  //<stmt_pair_body> -> <stmt> <stmt> RPAREN_T 
+  // <stmt_pair_body> -> <stmt> <stmt> RPAREN_T <stmt_pair>
+  // <stmt_pair_body> -> <stmt> <stmt> RPAREN_T
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Stmt_Pair_Body function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
