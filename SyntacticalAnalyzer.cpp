@@ -80,8 +80,6 @@ int SyntacticalAnalyzer::program()
 	errors++;
       }
     
-    codeGen->WriteCode(0,"return 0;\n");
-    codeGen->WriteCode(0, "}");
     tok = lex->GetTokenName(token);
     p2file << "Exiting Program function; current token is: " << tok << endl;
     return errors;
@@ -95,8 +93,8 @@ int SyntacticalAnalyzer::more_defines()
     if (token == DEFINE_T)
     {   // apply rule 2
         p2file << "Using Rule 2\n";        
-        codeGen->WriteCode(0, "Object(");
-        errors += define(); 
+        errors += define();
+        codeGen->WriteCode(0, "\n");
         if (token == LPAREN_T)
         {
             token = lex->GetToken();
@@ -115,7 +113,10 @@ int SyntacticalAnalyzer::more_defines()
         token = lex->GetToken();
         errors += stmt_list(", ", false);
         if (token == RPAREN_T)
+        {
+            codeGen->WriteCode(0, ")");
             token = lex->GetToken();
+        }
         else
         {
             lex->ReportError ("right parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
@@ -152,10 +153,15 @@ int SyntacticalAnalyzer::define()
             lex->ReportError ("left parenthesis expected(4), '" + lex->GetTokenName(token) + "' found.");
             errors++;
         }
+        bool inMain = false;
         if (token == IDENT_T)
         {
-            if(lex->GetLexeme() == "main") { codeGen->WriteCode(0, "int main("); }
-            else { codeGen->WriteCode(0, "object " + lex->GetLexeme() + "("); }
+            if(lex->GetLexeme() == "main")
+            {
+                codeGen->WriteCode(0, "int main(");
+                inMain = true;
+            }
+            else { codeGen->WriteCode(0, "Object " + lex->GetLexeme() + "("); }
             token = lex->GetToken();
         } else {
             lex->ReportError ("left parenthesis expected, '" + lex->GetTokenName(token) + "' found.");
@@ -165,7 +171,7 @@ int SyntacticalAnalyzer::define()
         //token = lex->GetToken();
         if (token == RPAREN_T){
             token = lex->GetToken();
-            codeGen->WriteCode(0, ")\n{\n");
+            codeGen->WriteCode(0, ")\n{\n" + string((inMain) ? "" : "Object retVal(0);\n" ));
         } else {
             lex->ReportError ("right parenthesis expected(1), '" + lex->GetTokenName(token) + "' found.");
             errors++;
@@ -173,7 +179,7 @@ int SyntacticalAnalyzer::define()
         errors += stmt();
         errors += stmt_list(";\n", true);
         if (token == RPAREN_T){
-            codeGen->WriteCode(0, ";\n");
+            codeGen->WriteCode(0, ";\nreturn " + string((inMain) ? "0" : "retVal") + ";\n}\n\n");
             token = lex->GetToken();
         }
         else {
@@ -231,6 +237,7 @@ int SyntacticalAnalyzer::stmt()
     else if (token == IDENT_T)
     {   // apply rule 8
         p2file << "Using Rule 8\n";
+        codeGen->WriteCode(0, lex->GetLexeme());
         token = lex->GetToken();
     }
     else if (token == LPAREN_T)
@@ -265,6 +272,7 @@ int SyntacticalAnalyzer::literal()
     string tok = lex->GetTokenName(token), lexeme = lex->GetLexeme();
     p2file << "Entering Literal function; current token is: " << tok << ", lexeme: " << lexeme << endl;
     int errors = 0;
+    codeGen->WriteCode(0, "Object(");
     if (token == NUMLIT_T)
     {   // apply rule 10
         p2file << "Using Rule 10\n";
@@ -289,6 +297,7 @@ int SyntacticalAnalyzer::literal()
         lex->ReportError ("NUMLIT_T, STRLIT_T or SQUOTE_T expected, '" + lex->GetTokenName(token) + "' found.");
         errors++;
     }
+    codeGen->WriteCode(0, ")");
     tok = lex->GetTokenName(token);
     p2file << "Exiting Literal function; current token is: " << tok << endl;
     return errors;
@@ -355,7 +364,7 @@ int SyntacticalAnalyzer::param_list(const bool& first)
     {   // apply rule 16
         p2file << "Using Rule 16\n";
         if(!first) { codeGen->WriteCode(0, ", "); }
-        codeGen->WriteCode(0, lexeme);
+        codeGen->WriteCode(0, "Object " + lexeme);
         token = lex->GetToken();
         errors += param_list(false);
     }
